@@ -120,8 +120,8 @@ func (r *Registers) ParseFlags() *Flags {
 	}
 }
 
-// boolToUint8 maps a bool to a numeric value for bitwise ops.
-func boolToUint8(b bool) byte {
+// boolToByte maps a bool to a numeric value for bitwise ops.
+func boolToByte(b bool) byte {
 	if b {
 		return 1
 	}
@@ -130,5 +130,5 @@ func boolToUint8(b bool) byte {
 
 // SetFlags assigns the register flags to match the provided Flags' values.
 func (r *Registers) SetFlags(f *Flags) {
-	r.Flags = (boolToUint8(f.Zero) << zero) | (boolToUint8(f.Subtract) << subtract) | (boolToUint8(f.HalfCarry) << halfCarry) | (boolToUint8(f.Carry) << carry)
+	r.Flags = (boolToByte(f.Zero) << zero) | (boolToByte(f.Subtract) << subtract) | (boolToByte(f.HalfCarry) << halfCarry) | (boolToByte(f.Carry) << carry)
 }
