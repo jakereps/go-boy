@@ -1,7 +1,5 @@
 package gb
 
-import "fmt"
-
 // register is an internal type for simple referencing of registers.
 type register byte
 
@@ -117,8 +115,6 @@ func (r *Registers) SetHL(i uint16) {
 
 // ParseFlags converts the byte representation of the flags to a helper struct.
 func (r *Registers) ParseFlags() *Flags {
-	fmt.Println(zero)
-	fmt.Println((0x80 >> zero))
 	return &Flags{
 		Zero:      ((r.Flags >> zero) & 0x1) != 0,
 		Subtract:  ((r.Flags >> subtract) & 0x1) != 0,
