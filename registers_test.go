@@ -99,7 +99,7 @@ func TestRegisters_set(t *testing.T) {
 
 func TestRegisters_ParseFlags(t *testing.T) {
 	type fields struct {
-		Flags byte
+		F byte
 	}
 	tests := []struct {
 		name   string
@@ -110,7 +110,7 @@ func TestRegisters_ParseFlags(t *testing.T) {
 			name: "zero",
 			fields: fields{
 				// 0b1000 0000
-				Flags: 0x80,
+				F: 0x80,
 			},
 			want: &Flags{
 				Zero: true,
@@ -120,7 +120,7 @@ func TestRegisters_ParseFlags(t *testing.T) {
 			name: "subtract",
 			fields: fields{
 				// 0b0100 0000
-				Flags: 0x40,
+				F: 0x40,
 			},
 			want: &Flags{
 				Subtract: true,
@@ -130,7 +130,7 @@ func TestRegisters_ParseFlags(t *testing.T) {
 			name: "halfCarry",
 			fields: fields{
 				// 0b0010 0000
-				Flags: 0x20,
+				F: 0x20,
 			},
 			want: &Flags{
 				HalfCarry: true,
@@ -140,7 +140,7 @@ func TestRegisters_ParseFlags(t *testing.T) {
 			name: "carry",
 			fields: fields{
 				// 0b0001 0000
-				Flags: 0x10,
+				F: 0x10,
 			},
 			want: &Flags{
 				Carry: true,
@@ -149,7 +149,7 @@ func TestRegisters_ParseFlags(t *testing.T) {
 		{
 			name: "all",
 			fields: fields{
-				Flags: 0xFF,
+				F: 0xFF,
 			},
 			want: &Flags{
 				Zero:      true,
@@ -162,7 +162,7 @@ func TestRegisters_ParseFlags(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			r := &Registers{
-				Flags: tt.fields.Flags,
+				F: tt.fields.F,
 			}
 			if got := r.ParseFlags(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Registers.ParseFlags() = %v, want %v", got, tt.want)
@@ -250,23 +250,23 @@ func TestRegisters_SetFlags(t *testing.T) {
 			r := &Registers{}
 			r.SetFlags(tt.args.f)
 			if tt.args.f.Zero {
-				if ((r.Flags >> zero) & 0x1) != 1 {
-					t.Errorf("Registers.SetFlags().Zero = %v, want %v", ((r.Flags >> zero) & 0x1), 1)
+				if ((r.F >> zero) & 0x1) != 1 {
+					t.Errorf("Registers.SetFlags().Zero = %v, want %v", ((r.F >> zero) & 0x1), 1)
 				}
 			}
 			if tt.args.f.Subtract {
-				if ((r.Flags >> subtract) & 0x1) != 1 {
-					t.Errorf("Registers.SetFlags().Subtract = %v, want %v", ((r.Flags >> subtract) & 0x1), 1)
+				if ((r.F >> subtract) & 0x1) != 1 {
+					t.Errorf("Registers.SetFlags().Subtract = %v, want %v", ((r.F >> subtract) & 0x1), 1)
 				}
 			}
 			if tt.args.f.HalfCarry {
-				if ((r.Flags >> halfCarry) & 0x1) != 1 {
-					t.Errorf("Registers.SetFlags().HalfCarry = %v, want %v", ((r.Flags >> halfCarry) & 0x1), 1)
+				if ((r.F >> halfCarry) & 0x1) != 1 {
+					t.Errorf("Registers.SetFlags().HalfCarry = %v, want %v", ((r.F >> halfCarry) & 0x1), 1)
 				}
 			}
 			if tt.args.f.Carry {
-				if ((r.Flags >> carry) & 0x1) != 1 {
-					t.Errorf("Registers.SetFlags().Carry = %v, want %v", ((r.Flags >> carry) & 0x1), 1)
+				if ((r.F >> carry) & 0x1) != 1 {
+					t.Errorf("Registers.SetFlags().Carry = %v, want %v", ((r.F >> carry) & 0x1), 1)
 				}
 			}
 		})

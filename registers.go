@@ -29,15 +29,14 @@ const (
 
 // Registers contain various combinations of values for usage in the CPU.
 type Registers struct {
-	A     byte
-	B     byte
-	C     byte
-	D     byte
-	E     byte
-	F     byte
-	H     byte
-	L     byte
-	Flags byte
+	A byte
+	B byte
+	C byte
+	D byte
+	E byte
+	F byte
+	H byte
+	L byte
 }
 
 // Flags contains the 4 values for the Flags register based on the byte value.
@@ -116,10 +115,10 @@ func (r *Registers) SetHL(i uint16) {
 // ParseFlags converts the byte representation of the flags to a helper struct.
 func (r *Registers) ParseFlags() *Flags {
 	return &Flags{
-		Zero:      ((r.Flags >> zero) & 0x1) != 0,
-		Subtract:  ((r.Flags >> subtract) & 0x1) != 0,
-		HalfCarry: ((r.Flags >> halfCarry) & 0x1) != 0,
-		Carry:     ((r.Flags >> carry) & 0x1) != 0,
+		Zero:      ((r.F >> zero) & 0x1) != 0,
+		Subtract:  ((r.F >> subtract) & 0x1) != 0,
+		HalfCarry: ((r.F >> halfCarry) & 0x1) != 0,
+		Carry:     ((r.F >> carry) & 0x1) != 0,
 	}
 }
 
@@ -133,5 +132,5 @@ func boolToByte(b bool) byte {
 
 // SetFlags assigns the register flags to match the provided Flags' values.
 func (r *Registers) SetFlags(f *Flags) {
-	r.Flags = (boolToByte(f.Zero) << zero) | (boolToByte(f.Subtract) << subtract) | (boolToByte(f.HalfCarry) << halfCarry) | (boolToByte(f.Carry) << carry)
+	r.F = (boolToByte(f.Zero) << zero) | (boolToByte(f.Subtract) << subtract) | (boolToByte(f.HalfCarry) << halfCarry) | (boolToByte(f.Carry) << carry)
 }
