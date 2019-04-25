@@ -1,11 +1,11 @@
-package gb
+package cpu
 
 import (
 	"reflect"
 	"testing"
 )
 
-func TestRegisters_combine(t *testing.T) {
+func Testregisters_combine(t *testing.T) {
 	type args struct {
 		i byte
 		j byte
@@ -27,15 +27,15 @@ func TestRegisters_combine(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := &Registers{}
+			r := &registers{}
 			if got := r.combine(tt.args.i, tt.args.j); got != tt.want {
-				t.Errorf("Registers.combine() = %v, want %v", got, tt.want)
+				t.Errorf("registers.combine() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestRegisters_set(t *testing.T) {
+func Testregisters_set(t *testing.T) {
 	type args struct {
 		reg register
 		i   uint16
@@ -75,31 +75,31 @@ func TestRegisters_set(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := &Registers{}
+			r := &registers{}
 			r.set(tt.args.reg, tt.args.i)
 			var got uint16
 			switch tt.args.reg {
 			case af:
-				got = uint16(r.A)<<8 | uint16(r.F)
+				got = uint16(r.a)<<8 | uint16(r.f)
 			case bc:
-				got = uint16(r.B)<<8 | uint16(r.C)
+				got = uint16(r.b)<<8 | uint16(r.c)
 			case de:
-				got = uint16(r.D)<<8 | uint16(r.E)
+				got = uint16(r.d)<<8 | uint16(r.e)
 			case hl:
-				got = uint16(r.H)<<8 | uint16(r.L)
+				got = uint16(r.h)<<8 | uint16(r.l)
 			default:
 				t.Fatal("invalid reg provided in test args")
 			}
 			if got != tt.args.i {
-				t.Errorf("Registers.set() = %v, want %v", got, tt.args.i)
+				t.Errorf("registers.set() = %v, want %v", got, tt.args.i)
 			}
 		})
 	}
 }
 
-func TestRegisters_ParseFlags(t *testing.T) {
+func Testregisters_ParseFlags(t *testing.T) {
 	type fields struct {
-		F byte
+		f byte
 	}
 	tests := []struct {
 		name   string
@@ -110,62 +110,62 @@ func TestRegisters_ParseFlags(t *testing.T) {
 			name: "zero",
 			fields: fields{
 				// 0b1000 0000
-				F: 0x80,
+				f: 0x80,
 			},
 			want: &Flags{
-				Zero: true,
+				zero: true,
 			},
 		},
 		{
 			name: "subtract",
 			fields: fields{
 				// 0b0100 0000
-				F: 0x40,
+				f: 0x40,
 			},
 			want: &Flags{
-				Subtract: true,
+				subtract: true,
 			},
 		},
 		{
 			name: "halfCarry",
 			fields: fields{
 				// 0b0010 0000
-				F: 0x20,
+				f: 0x20,
 			},
 			want: &Flags{
-				HalfCarry: true,
+				halfCarry: true,
 			},
 		},
 		{
 			name: "carry",
 			fields: fields{
 				// 0b0001 0000
-				F: 0x10,
+				f: 0x10,
 			},
 			want: &Flags{
-				Carry: true,
+				carry: true,
 			},
 		},
 		{
 			name: "all",
 			fields: fields{
-				F: 0xFF,
+				f: 0xFF,
 			},
 			want: &Flags{
-				Zero:      true,
-				Subtract:  true,
-				HalfCarry: true,
-				Carry:     true,
+				zero:      true,
+				subtract:  true,
+				halfCarry: true,
+				carry:     true,
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := &Registers{
-				F: tt.fields.F,
+			r := &registers{
+				f: tt.fields.f,
 			}
 			if got := r.ParseFlags(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Registers.ParseFlags() = %v, want %v", got, tt.want)
+				t.Errorf("registers.ParseFlags() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -204,7 +204,7 @@ func Test_boolToByte(t *testing.T) {
 	}
 }
 
-func TestRegisters_SetFlags(t *testing.T) {
+func Testregisters_SetFlags(t *testing.T) {
 	type args struct {
 		f *Flags
 	}
@@ -216,7 +216,7 @@ func TestRegisters_SetFlags(t *testing.T) {
 			name: "zero",
 			args: args{
 				f: &Flags{
-					Zero: true,
+					zero: true,
 				},
 			},
 		},
@@ -224,7 +224,7 @@ func TestRegisters_SetFlags(t *testing.T) {
 			name: "subtract",
 			args: args{
 				f: &Flags{
-					Subtract: true,
+					subtract: true,
 				},
 			},
 		},
@@ -232,7 +232,7 @@ func TestRegisters_SetFlags(t *testing.T) {
 			name: "halfCarry",
 			args: args{
 				f: &Flags{
-					HalfCarry: true,
+					halfCarry: true,
 				},
 			},
 		},
@@ -240,33 +240,33 @@ func TestRegisters_SetFlags(t *testing.T) {
 			name: "carry",
 			args: args{
 				f: &Flags{
-					Carry: true,
+					carry: true,
 				},
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			r := &Registers{}
+			r := &registers{}
 			r.SetFlags(tt.args.f)
-			if tt.args.f.Zero {
-				if ((r.F >> zero) & 0x1) != 1 {
-					t.Errorf("Registers.SetFlags().Zero = %v, want %v", ((r.F >> zero) & 0x1), 1)
+			if tt.args.f.zero {
+				if ((r.f >> zero) & 0x1) != 1 {
+					t.Errorf("registers.SetFlags().zero = %v, want %v", ((r.f >> zero) & 0x1), 1)
 				}
 			}
-			if tt.args.f.Subtract {
-				if ((r.F >> subtract) & 0x1) != 1 {
-					t.Errorf("Registers.SetFlags().Subtract = %v, want %v", ((r.F >> subtract) & 0x1), 1)
+			if tt.args.f.subtract {
+				if ((r.f >> subtract) & 0x1) != 1 {
+					t.Errorf("registers.SetFlags().subtract = %v, want %v", ((r.f >> subtract) & 0x1), 1)
 				}
 			}
-			if tt.args.f.HalfCarry {
-				if ((r.F >> halfCarry) & 0x1) != 1 {
-					t.Errorf("Registers.SetFlags().HalfCarry = %v, want %v", ((r.F >> halfCarry) & 0x1), 1)
+			if tt.args.f.halfCarry {
+				if ((r.f >> halfCarry) & 0x1) != 1 {
+					t.Errorf("registers.SetFlags().halfCarry = %v, want %v", ((r.f >> halfCarry) & 0x1), 1)
 				}
 			}
-			if tt.args.f.Carry {
-				if ((r.F >> carry) & 0x1) != 1 {
-					t.Errorf("Registers.SetFlags().Carry = %v, want %v", ((r.F >> carry) & 0x1), 1)
+			if tt.args.f.carry {
+				if ((r.f >> carry) & 0x1) != 1 {
+					t.Errorf("registers.SetFlags().Carry = %v, want %v", ((r.f >> carry) & 0x1), 1)
 				}
 			}
 		})

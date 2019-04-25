@@ -7,13 +7,13 @@ BINARY = go-boy
 build: $(BINDIR)/$(BINARY)
 
 $(BINDIR)/$(BINARY): $(BINDIR)
-	$(GO) build -o $(BINDIR)/$(BINARY) ./cmd/go-boy/...
+	$(GOM) build -o $(BINDIR)/$(BINARY) ./cmd/go-boy/...
 
 $(BINDIR):
 	mkdir -p $(BINDIR)
 
 clean:
-	$(GOM) clean
+	$(GO) clean
 	rm $(BINDIR)/$(BINARY)
 	rmdir $(BINDIR)
 
