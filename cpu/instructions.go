@@ -1,11 +1,18 @@
 package cpu
 
 // Instruction is the representation of a Game Boy CPU instruction.
-type Instruction byte
+type Instruction struct {
+	Operation   Operation
+	Cycles      int
+	Source      register
+	Destination register
+}
+
+type Operation byte
 
 // Game Boy CPU instructions supported.
 const (
-	LD Instruction = iota + 1
+	LD Operation = iota + 1
 	PUSH
 	POP
 	ADD
