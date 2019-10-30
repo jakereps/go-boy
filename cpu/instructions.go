@@ -5,7 +5,7 @@ type Instruction byte
 
 // Game Boy CPU instructions supported.
 const (
-	LD Instruction = iota
+	LD Instruction = iota + 1
 	PUSH
 	POP
 	ADD
