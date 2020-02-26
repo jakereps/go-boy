@@ -12,6 +12,8 @@ func buildInstruction(c int, op Operation, src, dest register) Instruction {
 }
 
 var InstructionSet = map[Opcode]Instruction{
+	// 8-Bit Transfer Instructions
+	// NOTE: A 111, B 000, C 001, D 010, E 011, H 100, L 101
 	// LD r,r' (r <- r') 1
 	Opcode(0x1<<6 | a<<3 | a): buildInstruction(1, LD, a, a),
 	Opcode(0x1<<6 | a<<3 | b): buildInstruction(1, LD, b, a),
@@ -104,6 +106,7 @@ var InstructionSet = map[Opcode]Instruction{
 	Opcode(0x3<<6 | 0x7<<3 | 0x2): buildInstruction(4, LD, a, a),
 	// LD (nn),A ((nn) <- A) 4
 	Opcode(0x3<<6 | 0x5<<3 | 0x2): buildInstruction(4, LD, a, a),
+
 	// LD A,(HLI) (A <- HL, HL <- HL+1) 2
 	Opcode(0x0 | 0x5<<3 | 0x2): buildInstruction(2, LD, a, a),
 	// LD A,(HLD) (A <- HL, HL <- HL-1) 2
@@ -116,4 +119,49 @@ var InstructionSet = map[Opcode]Instruction{
 	Opcode(0x0 | 0x4<<3 | 0x2): buildInstruction(2, LD, a, a),
 	// LD (HLD),A ((HL) <- A, HL <- HL-1) 2
 	Opcode(0x0 | 0x6<<3 | 0x2): buildInstruction(2, LD, a, a),
+
+	// 16-Bit Transfer Instructions
+	// NOTE: dd = BC 00, DE 01, HL 10, SP 11
+	// NOTE: qq = BC 00, DE 01, HL 10, AF 11
+	// LD dd,nn (dd <- nn) 3
+	// LD SP, HL (SP <- HL) 2
+	// PUSH qq ((SP-1)<-qqH (SP-2)<-qqL SP<-(SP-2)) 4
+	// POP qq (qqL <- (SP) qqH<-(SP+1) SP<-(SP+2)) 3
+	// NOTE: Affects flags - added before cycle count.
+	// LDHL SP,e (HL <- SP+e) **00 3
+	// LD (nn),SP ((nn)<-SPL (nn+1)<-SPH) 5
+
+	// 8-Bit Arithmetic and Logical Operation Instructions
+	// NOTE: s is any of r,n,(HL)
+	// NOTE: CYCLE - 1 when s is r, 2 when s is n or (HL)
+	// TODO: Figure out how to handle that in buildInstruction...
+	// NOTE: FLAGS added before cycles (CY,H,N,Z) - flag is affected according
+	//       to the result of the operation.
+	//       Z: Zero flag. z=1 if the result of the operation is 0
+	//       C: Carry/liink flag. C=1 if the operation produced a carry
+	//       from the MSB of the operand or result
+	//       H: Half-carry flag
+	//       N: Add/Subject flag.
+	// TODO: Figure out how to handle that in buildInstruction...
+	// ADD A,r (A<-A+r) **0* 1
+	// ADD A,n (A<-A+n) **0* 2
+	// ADD A,(HL) (A<-A+(HL)) **0* 2
+	// ADC A,s (A<-A+s+CY) **0* 1,2
+	// SUB s (A<-A-s) **1* 1,2
+	// SBC A,s (A<-A-s-CY) **1* 1,2
+	// AND s (A<-A&s) 010* 1,2
+	// OR s (A|s) 000* 1,2
+	// XOR s (A^s) 0008 1,2
+	// CP s (A-s) **1* 1,2
+	// INC r (r<-r+1) -*0* 1
+	// INC (HL) ((HL) <- (HL)+1) -*0* 3
+	// DEC r (r <- r-1) -*1* 3
+	// DEC (HL) ((HL) <- (HL)-1) -*1* 3
+
+	// 16-Bit Arithmetic Operation Instructions
+	// NOTE: BC 00, DE 01, HL 10, SP 11
+	// ADD HL,ss (HL <- HL+ss) **0- 2
+	// ADD SP,e (SP <- SP+e) **00 4
+	// INC ss (ss <- ss+1) 2
+	// DEC ss (ss <- ss-1) 2
 }

@@ -1,21 +1,16 @@
-GO = go
-GOM = GO111MODULE=on $(GO)
+GO := go
+BINDIR := ./bin
+BINARY := go-boy
+GOFLAGS=-mod=vendor
 
-BINDIR = ./bin
-BINARY = go-boy
+bin: $(BINDIR)/$(BINARY)
 
-build: $(BINDIR)/$(BINARY)
-
-$(BINDIR)/$(BINARY): $(BINDIR)
-	$(GOM) build -o $(BINDIR)/$(BINARY) ./cmd/go-boy/...
-
-$(BINDIR):
-	mkdir -p $(BINDIR)
+$(BINDIR)/$(BINARY):
+	$(GO) build -o $(BINDIR)/$(BINARY) ./cmd/go-boy/...
 
 clean:
 	$(GO) clean
 	rm $(BINDIR)/$(BINARY)
-	rmdir $(BINDIR)
 
 test:
-	$(GOM) test -cover ./...
+	$(GO) test -cover ./...
